@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thread Synchronization Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Operating Systems Learning Lab</p>
+        <h1>Thread Synchronization Visualizer</h1>
+        <p class="hero-copy">
+          Explore how mutexes, semaphores, and monitors coordinate concurrent threads.
+          Watch scheduling, queues, buffer state, and deadlock behavior unfold in real time.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-label">Threads</span>
+          <strong id="threadCountStat">0</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Mode</span>
+          <strong id="modeStat">Mutex</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Simulation</span>
+          <strong id="simStatusStat">Idle</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="panel control-panel">
+        <div class="panel-header">
+          <h2>Controls</h2>
+          <p>Switch modes, add threads, adjust speed, and run step-by-step.</p>
+        </div>
+
+        <div class="control-grid">
+          <label class="control-field">
+            <span>Synchronization Mode</span>
+            <select id="modeSelect">
+              <option value="mutex">Mutex</option>
+              <option value="semaphore">Semaphore</option>
+              <option value="monitor">Monitor</option>
+            </select>
+          </label>
+
+          <label class="control-field">
+            <span>Semaphore Permits</span>
+            <input id="semaphoreLimit" type="number" min="1" max="6" value="2" />
+          </label>
+
+          <label class="control-field">
+            <span>Simulation Speed</span>
+            <select id="speedSelect">
+              <option value="1600">Slow</option>
+              <option value="950" selected>Medium</option>
+              <option value="500">Fast</option>
+            </select>
+          </label>
+
+          <label class="control-field">
+            <span>Step Mode</span>
+            <button id="stepModeToggle" class="ghost-button" type="button">Off</button>
+          </label>
+        </div>
+
+        <div class="action-row">
+          <button id="startBtn" class="primary-button" type="button">Start Simulation</button>
+          <button id="stepBtn" class="secondary-button" type="button">Next Step</button>
+          <button id="addThreadBtn" class="secondary-button" type="button">Add Thread</button>
+          <button id="resetBtn" class="ghost-button" type="button">Reset</button>
+        </div>
+
+        <div class="toggle-row">
+          <label class="toggle-card" for="deadlockToggle">
+            <input id="deadlockToggle" type="checkbox" />
+            <span>Deadlock Simulation</span>
+            <small>Creates a circular wait in Mutex mode with dual resources.</small>
+          </label>
+        </div>
+
+        <div class="legend">
+          <div><span class="legend-dot running"></span>Running</div>
+          <div><span class="legend-dot waiting"></span>Waiting</div>
+          <div><span class="legend-dot blocked"></span>Blocked</div>
+        </div>
+      </section>
+
+      <section class="panel visualization-panel">
+        <div class="panel-header">
+          <h2>Live Visualization</h2>
+          <p>Threads move through queues, critical sections, and monitor conditions.</p>
+        </div>
+        <div id="visualizationCanvas" class="visualization-canvas">
+          <div class="zone thread-pool-zone">
+            <span class="zone-title">Thread Pool</span>
+          </div>
+          <div id="queueZone" class="zone queue-zone">
+            <span class="zone-title">Waiting Queue</span>
+          </div>
+          <div id="resourceZone" class="zone resource-zone">
+            <span class="zone-title">Resource Area</span>
+          </div>
+          <div id="conditionZone" class="zone condition-zone">
+            <span class="zone-title">Condition Wait</span>
+          </div>
+          <div id="bufferZone" class="bounded-buffer hidden">
+            <div class="buffer-header">
+              <span>Bounded Buffer</span>
+              <small>Producer-Consumer monitor demo</small>
+            </div>
+            <div id="bufferSlots" class="buffer-slots"></div>
+          </div>
+          <div id="threadLayer" class="thread-layer"></div>
+        </div>
+      </section>
+
+      <section class="panel side-panel">
+        <div class="panel-header">
+          <h2>State & Scheduling</h2>
+          <p>Observe queue order, primitive data, and classical synchronization behavior.</p>
+        </div>
+
+        <div class="info-stack">
+          <div class="mini-panel">
+            <h3>Primitive Snapshot</h3>
+            <div id="primitiveDetails" class="mini-content"></div>
+          </div>
+          <div class="mini-panel">
+            <h3>Queue Visualization</h3>
+            <div id="queueList" class="pill-list"></div>
+          </div>
+          <div class="mini-panel">
+            <h3>Condition Variables</h3>
+            <div id="conditionList" class="pill-list"></div>
+          </div>
+          <div class="mini-panel">
+            <h3>Producer / Consumer Roles</h3>
+            <div id="roleList" class="pill-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel log-panel">
+        <div class="panel-header">
+          <h2>Real-Time Event Log</h2>
+          <p>Every acquisition, release, wait, wake-up, and deadlock transition is logged.</p>
+        </div>
+        <div id="logPanel" class="log-panel-body"></div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
